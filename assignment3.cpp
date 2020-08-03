@@ -1,26 +1,26 @@
-//Assignment 4
-//-	Implement base class, derived class for shape, triangle, right triangle, 
-//rectangle and square with methods to calculate area and perimeter.
-//-	Create a class of shape manager which is a container to store these shapes. 
-//This class has a method for user to add shapes and print all of their area and perimeter.
+//in one brand
 #include<iostream>
-#include <cassert>
+#include<cassert>
 #include<vector>
+#include <functional>
 using namespace std;
+
 class Shape
 {
-	public:
-		Shape() = default;
-		virtual double cal_area();
-		virtual double cal_perimeter();
-		~Shape(){
-		};
+	protected:
+        double area, perimeter;
+    public:
+		Shape(){};
+		virtual double cal_area(){return area;};
+		virtual double cal_perimeter(){return perimeter;};
+		~Shape(){};
+		
 };
 
 class Triangle : public Shape
 {
 	protected:
-		double a,b,c;
+		double a{},b{},c{};
 	public:
 		Triangle(double a1,double b1,double c1):Shape()
 		{
@@ -28,28 +28,18 @@ class Triangle : public Shape
 			b = b1; //second line lenght
 			c = c1; //third line lenght
 		};
-		~Triangle(){
-		};
-		double cal_area(){return 0;};
-		double cal_perimeter(){
-			return (a+b+c);
-		};
+		~Triangle(){};
+		double cal_area();
+		double cal_perimeter();
 
 };
 
-class Rectangle : public Shape
-{
-	protected:
-		double a, b;
-	public:
-		Rectangle(double a1, double b1):Shape(){
-			a = a1;
-			b= b1;
-		};
-		~Rectangle(){
-		};
-		double cal_area(){return 0;};
-		double cal_perimeter(){return 2*(a+b);};	
+double Triangle::cal_area(){
+    return 1.0;
+};
+double Triangle::cal_perimeter(){
+    cout << "In Triangle" <<'\n';
+    return (a+b+c);
 };
 
 class RightTriangle : public Triangle
@@ -62,37 +52,26 @@ class RightTriangle : public Triangle
 		}
 	double cal_area(){return 0;};
 	double cal_perimeter(){
+        cout << "In RightTriangle" <<'\n';
 		return (a+b+c);
 	};
-};
-
-class Square : public Rectangle
-{
-	public:
-	Square(double a1,double b1):
-		Rectangle(a1,b1)
-		{
-			
-		}	
-	double cal_area(){return 0;};
-	double cal_perimeter(){return 2*(a+b);};	
 };
 
 class ShapeManager
 {
 	private:
 		int m_lenght{0};
-		vector<Shape> m_data; 
+		vector<reference_wrapper<Shape>> m_data{}; 
 	public:
 		ShapeManager() = default;
-//		ShapeManager(int lenght):
-//			m_lenght{lenght}
-//			{
-//				assert(lenght>=0);
-//				if(lenght>0){
-//					vector<Shape> m_data(lenght);
-//				}
-//			};
+		ShapeManager(int lenght):
+			m_lenght{lenght}
+			{
+				assert(lenght>=0);
+				if(lenght>0){
+					vector<Shape> m_data(lenght);
+				}
+			};
 		~ShapeManager(){
 			delete[] &m_data;
 		}
@@ -101,28 +80,32 @@ class ShapeManager
 			return m_data[index];
 		};
 		void addShape(Shape &shape){
+			//cout << shape.cal_perimeter()<<'\n';
 			m_data.push_back(shape);
+			//cout << shape.cal_perimeter()<<'\n';
 		};
 		void printShape(){
-			for(vector<Shape>::iterator ptr = m_data.begin();ptr!=m_data.end();++ptr){
-				//cout << ptr->cal_perimeter() << " ";
-				cout << "10 ";
+            //cout<<"check"<<'\n';
+			for(vector<reference_wrapper<Shape>>::iterator ptr = m_data.begin();ptr!=m_data.end();++ptr){
+				cout << ptr->get().cal_perimeter() << '\n';
+				//cout << "10 ";
 			}
 		};
 };
 int main(){
-	//RightTriangle firstTriangle(1.0,1.0,1.0);
-	
-	//std::cout << firstTriangle.cal_perimeter();
-	ShapeManager ShapeManager1;
-//	
+    Shape *ptr;
 	Triangle one_triangle(1,2,3);
-//
-//	ShapeManager1.addShape(one_triangle);
-//	ShapeManager1.printShape();
-//	
-
+    RightTriangle one_right_trianngle(3,1,10);
+	RightTriangle two_right_trianngle(3,1,60);
+    // ptr=&one_triangle;
+    // cout << ptr->cal_perimeter() << '\n';
+    // ptr = &one_right_trianngle;
+    // cout << ptr->cal_perimeter() << '\n';
+    
+    ShapeManager ShapeManager1;
+    ShapeManager1.addShape(one_triangle);
+    ShapeManager1.addShape(one_right_trianngle);
+	ShapeManager1.addShape(two_right_trianngle);
+    ShapeManager1.printShape();
 	return 0;
 };
-
-
